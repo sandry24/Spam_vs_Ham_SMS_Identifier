@@ -68,7 +68,7 @@ print(sequences_padded[:5])
 
 # create and compile the model
 model = keras.Sequential([
-    Embedding(input_dim=max_words, output_dim=64, input_length=max_len),
+    Embedding(input_dim=max_words, output_dim=50, input_length=max_len),
     LSTM(64),
     Dense(256, activation='relu'),
     Dropout(0.5),
@@ -81,20 +81,23 @@ print(model.summary())
 # train the model
 history = model.fit(
     sequences_padded, y_train,
-    batch_size=128, epochs=10,
+    batch_size=64, epochs=10,
     validation_split=0.2,
-    callbacks=[tf.keras.callbacks.EarlyStopping(monitor='val_loss', min_delta=0.0001)],
+    callbacks=[tf.keras.callbacks.EarlyStopping(monitor='val_loss', min_delta=0.00001)],
 )
 
 
 # plot the training info
 def plot_loss(history):
+    plt.subplot(1, 2, 1)
     plt.plot(history.history['loss'], label='loss')
     plt.plot(history.history['val_loss'], label='val_loss')
-    plt.xlabel('Epoch')
-    plt.ylabel('Error [expenses]')
     plt.legend()
-    plt.grid(True)
+    plt.subplot(1, 2, 2)
+    plt.plot(history.history['accuracy'], label='acc')
+    plt.plot(history.history['val_accuracy'], label='val_acc')
+    plt.legend()
+    plt.show()
 
 
 plot_loss(history)
